@@ -7,6 +7,9 @@ import com.myproject.result.ResponseResult;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -26,14 +29,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseResult<String> login(@RequestBody User user) {
+    public ResponseResult<Map<String, Object>> login(@RequestBody User user) {
         User dbUser = userService.findByUsername(user.getUsername());
         if (dbUser == null || !DigestUtils.md5DigestAsHex(user.getPassword().getBytes()).equals(dbUser.getPassword())) {
             return ResponseResult.fail("用户名或密码错误");
         }
 
         String token = jwtUtil.generateToken(dbUser.getId(), dbUser.getUsername());
-        return ResponseResult.success(token);
+
+        // 返回包含token和username的数据结构
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("username", dbUser.getUsername());
+
+        return ResponseResult.success(data);
     }
 
     @PostMapping("/forgot-password")
