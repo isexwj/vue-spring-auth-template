@@ -45,8 +45,8 @@ public class UserController {
         return ResponseResult.success(data);
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseResult<String> forgotPassword(@RequestParam String username, @RequestParam String newPassword) {
+    @PostMapping("/forget-password")
+    public ResponseResult<String> forgetPassword(@RequestParam String username, @RequestParam String newPassword) {
         boolean ok = userService.resetPassword(username, newPassword);
         if (!ok) return ResponseResult.fail("重置失败，用户名不存在");
         return ResponseResult.success("密码重置成功");

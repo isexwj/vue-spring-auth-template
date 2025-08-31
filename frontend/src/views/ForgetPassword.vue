@@ -1,17 +1,17 @@
 <template>
-  <div class="register-container">
+  <div class="forget-password-container">
     <div class="form-wrapper">
       <div class="form-header">
-        <h2>创建账户</h2>
-        <p>请填写以下信息完成注册</p>
+        <h2>重置密码</h2>
+        <p>请输入用户名和新密码来重置您的账户密码</p>
       </div>
       
       <el-form 
         :model="form" 
         :rules="rules" 
         ref="formRef" 
-        @submit.prevent="handleRegister"
-        class="register-form"
+        @submit.prevent="handleResetPassword"
+        class="reset-form"
       >
         <el-form-item prop="username">
           <el-input 
@@ -22,11 +22,11 @@
           />
         </el-form-item>
         
-        <el-form-item prop="password">
+        <el-form-item prop="newPassword">
           <el-input 
-            v-model="form.password" 
+            v-model="form.newPassword" 
             type="password" 
-            placeholder="请输入密码"
+            placeholder="请输入新密码"
             prefix-icon="Lock"
             size="default"
             show-password
@@ -37,7 +37,7 @@
           <el-input 
             v-model="form.confirmPassword" 
             type="password" 
-            placeholder="请确认密码"
+            placeholder="请确认新密码"
             prefix-icon="Lock"
             size="default"
             show-password
@@ -47,20 +47,23 @@
         <el-form-item>
           <el-button 
             type="primary" 
-            @click="handleRegister" 
+            @click="handleResetPassword" 
             :loading="loading"
             size="default"
             class="submit-btn"
           >
-            {{ loading ? '注册中...' : '注册' }}
+            {{ loading ? '重置中...' : '重置密码' }}
           </el-button>
         </el-form-item>
       </el-form>
       
       <div class="form-footer">
-        <span class="login-text">已有账户？</span>
         <el-button type="text" @click="$router.push('/login')" class="link-btn">
-          立即登录
+          <el-icon size="14"><ArrowLeft /></el-icon>
+          返回登录
+        </el-button>
+        <el-button type="text" @click="$router.push('/register')" class="link-btn">
+          还没有账户？立即注册
         </el-button>
       </div>
     </div>
@@ -69,9 +72,10 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { register } from '@/api/user'
+import { forgetPassword } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { ArrowLeft } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const formRef = ref()
@@ -79,7 +83,7 @@ const loading = ref(false)
 
 const form = reactive({
   username: '',
-  password: '',
+  newPassword: '',
   confirmPassword: ''
 })
 
@@ -88,15 +92,15 @@ const rules = {
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' }
   ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
   ],
   confirmPassword: [
-    { required: true, message: '请确认密码', trigger: 'blur' },
+    { required: true, message: '请确认新密码', trigger: 'blur' },
     {
       validator: (rule, value, callback) => {
-        if (value !== form.password) {
+        if (value !== form.newPassword) {
           callback(new Error('两次输入密码不一致'))
         } else {
           callback()
@@ -107,23 +111,25 @@ const rules = {
   ]
 }
 
-const handleRegister = async () => {
+const handleResetPassword = async () => {
   if (!formRef.value) return
   
   try {
     await formRef.value.validate()
     loading.value = true
     
-    const { confirmPassword, ...registerData } = form
-    await register(registerData)
+    await forgetPassword({
+      username: form.username,
+      newPassword: form.newPassword
+    })
     
-    ElMessage.success('注册成功，请登录')
+    ElMessage.success('密码重置成功，请使用新密码登录')
     router.push('/login')
   } catch (error) {
     if (error.response?.data?.message) {
       ElMessage.error(error.response.data.message)
     } else {
-      ElMessage.error('注册失败，请重试')
+      ElMessage.error('密码重置失败，请重试')
     }
   } finally {
     loading.value = false
@@ -132,7 +138,7 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-.register-container {
+.forget-password-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -168,7 +174,7 @@ const handleRegister = async () => {
   font-size: 14px;
 }
 
-.register-form {
+.reset-form {
   margin-bottom: 20px;
 }
 
@@ -182,14 +188,10 @@ const handleRegister = async () => {
 
 .form-footer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
-}
-
-.login-text {
-  color: #64748b;
-  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .link-btn {
