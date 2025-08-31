@@ -4,6 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.myproject.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
-@Mapper   // 必须加
+@Mapper
 public interface UserMapper extends BaseMapper<User> {
 }

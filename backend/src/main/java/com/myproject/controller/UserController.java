@@ -1,61 +1,41 @@
 package com.myproject.controller;
 
-import com.myproject.entity.User;
+import com.myproject.dto.UserLoginDTO;
+import com.myproject.dto.UserRegisterDTO;
+import com.myproject.dto.ForgetPasswordDTO;
+import com.myproject.vo.UserLoginVO;
+import com.myproject.vo.UserInfoVO;
 import com.myproject.service.UserService;
-import com.myproject.utils.JwtUtil;
 import com.myproject.result.ResponseResult;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
-    public UserController(UserService userService, JwtUtil jwtUtil) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register")
-    public ResponseResult<String> register(@RequestBody User user) {
-        userService.register(user);
-        return ResponseResult.success("注册成功");
+    public ResponseResult<String> register(@RequestBody UserRegisterDTO registerDTO) {
+        return userService.register(registerDTO);
     }
 
     @PostMapping("/login")
-    public ResponseResult<Map<String, Object>> login(@RequestBody User user) {
-        User dbUser = userService.findByUsername(user.getUsername());
-        if (dbUser == null || !DigestUtils.md5DigestAsHex(user.getPassword().getBytes()).equals(dbUser.getPassword())) {
-            return ResponseResult.fail("用户名或密码错误");
-        }
-
-        String token = jwtUtil.generateToken(dbUser.getId(), dbUser.getUsername());
-
-        // 返回包含token和username的数据结构
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-        data.put("username", dbUser.getUsername());
-
-        return ResponseResult.success(data);
+    public ResponseResult<UserLoginVO> login(@RequestBody UserLoginDTO loginDTO) {
+        return userService.login(loginDTO);
     }
 
     @PostMapping("/forget-password")
-    public ResponseResult<String> forgetPassword(@RequestParam String username, @RequestParam String newPassword) {
-        boolean ok = userService.resetPassword(username, newPassword);
-        if (!ok) return ResponseResult.fail("重置失败，用户名不存在");
-        return ResponseResult.success("密码重置成功");
+    public ResponseResult<String> forgetPassword(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+        return userService.forgetPassword(forgetPasswordDTO);
     }
 
     @GetMapping("/{username}")
-    public ResponseResult<User> getUser(@PathVariable String username) {
-        User user = userService.findByUsername(username);
-        if (user == null) return ResponseResult.fail("用户不存在");
-        return ResponseResult.success(user);
+    public ResponseResult<UserInfoVO> getUserInfo(@PathVariable String username) {
+        return userService.getUserInfo(username);
     }
 }
