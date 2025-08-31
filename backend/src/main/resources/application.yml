@@ -10,3 +10,20 @@ server:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html  # Swagger UI 页面路径
+    display-request-duration: true
+    operationsSorter: alpha
+    defaultModelsExpandDepth: 1
+  info:
+    title: MyProject API 文档
+    description: 用户注册/登录/忘记密码接口
+    version: 1.0.0
+
+jwt:
+  secret: my_super_secret_key_which_is_at_least_32_bytes!
+  expiration: 86400000 # 1天
