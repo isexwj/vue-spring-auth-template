@@ -148,12 +148,15 @@ const handleLogout = () => {
 }
 
 .nav-menu .el-menu-item {
-  height: 56px;
-  line-height: 56px;
+  height: 48px;
+  line-height: 48px;
   font-size: 15px;
   font-weight: 500;
   border-radius: 6px;
   margin: 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .nav-menu .el-menu-item:hover {
@@ -207,8 +210,8 @@ const handleLogout = () => {
 }
 
 :deep(.el-header) {
-  height: 56px;
-  line-height: 56px;
+  height: 48px;
+  line-height: 48px;
 }
 
 :deep(.el-main) {

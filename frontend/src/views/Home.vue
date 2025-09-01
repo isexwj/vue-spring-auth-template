@@ -46,7 +46,7 @@
           
           <div class="user-info-card">
             <div class="user-avatar">
-              <el-icon size="32"><User /></el-icon>
+              <el-icon size="24"><User /></el-icon>
             </div>
             <div class="user-details">
               <h3>用户信息</h3>
@@ -148,7 +148,7 @@ const handleLogout = async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 48px;
   padding: 0 24px;
 }
 
@@ -199,7 +199,7 @@ const handleLogout = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 48px);
   padding: 40px 20px;
 }
 
@@ -241,8 +241,8 @@ const handleLogout = async () => {
   background: #3b82f6;
   color: white;
   border-radius: 50%;
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
